@@ -10,8 +10,14 @@ export default function ProfileScreen() {
   const router = useRouter();
 
   const handleLogout = () => {
-    logout();
-    Alert.alert('Déconnexion', 'Vous avez été déconnecté avec succès.');
+    Alert.alert(
+      'Déconnexion',
+      'Êtes-vous sûr de vouloir vous déconnecter ?',
+      [
+        { text: 'Annuler', style: 'cancel' },
+        { text: 'Se déconnecter', onPress: () => logout() },
+      ]
+    );
   };
 
   return (
@@ -20,22 +26,30 @@ export default function ProfileScreen() {
         <Card.Content>
           {user ? (
             <>
+              {/* Avatar avec la première lettre de l'email */}
               <Avatar.Text
                 size={64}
                 label={user.email.charAt(0).toUpperCase()}
                 style={styles.avatar}
               />
               <Text style={styles.title}>Bonjour, {user.email}</Text>
+
+              {/* Bouton de déconnexion */}
               <TouchableOpacity style={styles.buttonLogout} onPress={handleLogout}>
                 <Text style={styles.buttonText}>Se déconnecter</Text>
               </TouchableOpacity>
             </>
           ) : (
             <>
+              {/* Message si l'utilisateur n'est pas connecté */}
               <Text style={styles.title}>Vous n'êtes pas connecté</Text>
+
+              {/* Bouton de connexion */}
               <TouchableOpacity style={styles.button} onPress={() => router.push('/auth/login')}>
                 <Text style={styles.buttonText}>Connexion</Text>
               </TouchableOpacity>
+
+              {/* Bouton d'inscription */}
               <TouchableOpacity style={styles.buttonSecondary} onPress={() => router.push('/auth/register')}>
                 <Text style={styles.buttonTextSecondary}>Inscription</Text>
               </TouchableOpacity>
@@ -63,7 +77,7 @@ const styles = StyleSheet.create({
   avatar: {
     alignSelf: 'center',
     marginBottom: 15,
-    backgroundColor: '#007AFF',
+    backgroundColor: '#007AFF', // Couleur de l'avatar
   },
   title: {
     fontSize: 22,
@@ -73,34 +87,33 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   button: {
-    backgroundColor: '#007AFF',
+    backgroundColor: '#007AFF', // Couleur du bouton principal
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
     marginBottom: 10,
   },
   buttonLogout: {
-    backgroundColor: '#ff3b30',
+    backgroundColor: '#ff3b30', // Couleur du bouton de déconnexion
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
   },
   buttonSecondary: {
     borderWidth: 1,
-    borderColor: '#007AFF',
+    borderColor: '#007AFF', // Bordure du bouton secondaire
     padding: 12,
     borderRadius: 8,
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: '#fff', // Couleur du texte des boutons principaux
     fontSize: 16,
     fontWeight: 'bold',
   },
   buttonTextSecondary: {
-    color: '#007AFF',
+    color: '#007AFF', // Couleur du texte du bouton secondaire
     fontSize: 16,
     fontWeight: 'bold',
   },
 });
-

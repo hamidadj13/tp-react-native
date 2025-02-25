@@ -1,49 +1,52 @@
-// context/AuthContext.tsx
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import axios from 'axios';
+// contexts/AuthContext.tsx
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { auth } from '../configs/firebaseConfig';
+import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 
-interface User {
-  id: number;
-  email: string;
-}
+const AuthContext = createContext<any>(null);
 
-interface AuthContextType {
-  user: User | null;
-  login: (email: string, password: string) => Promise<void>;
-  logout: () => void;
-}
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-const AuthContext = createContext<AuthContextType | null>(null);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+      setLoading(false);
+    });
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+    return unsubscribe; // Désabonnement lors du démontage
+  }, []);
 
   const login = async (email: string, password: string) => {
     try {
-      // Simuler une connexion avec JSONPlaceholder
-      const response = await axios.post('https://jsonplaceholder.typicode.com/users', { email, password });
-      setUser(response.data);
+      await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
-      console.error(error);
-      throw error;
+      throw new Error('Échec de la connexion. Vérifiez vos informations.');
     }
   };
 
-  const logout = () => {
-    setUser(null);
+  const register = async (email: string, password: string) => {
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (error) {
+      throw new Error('Échec de l\'inscription. Veuillez réessayer.');
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await signOut(auth);
+    } catch (error) {
+      throw new Error('Échec de la déconnexion.');
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
-};
+export const useAuth = () => useContext(AuthContext);

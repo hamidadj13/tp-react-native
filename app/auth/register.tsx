@@ -1,109 +1,159 @@
 import React, { useState } from 'react';
-import { 
-  View, Text, TextInput, TouchableOpacity, Alert, StyleSheet, ActivityIndicator 
+import {
+  TouchableWithoutFeedback,
+  TouchableOpacity, StyleSheet, Text, TextInput, View, Keyboard,
+  KeyboardAvoidingView, Platform
 } from 'react-native';
-import { Link, router } from 'expo-router';
-import axios from 'axios';
+import { Link, useRouter } from 'expo-router';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function RegisterScreen() {
+  const { register } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleRegister = async () => {
     if (!email || !password) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+      setError('Veuillez remplir tous les champs.');
       return;
     }
 
     setLoading(true);
+    setError('');
+
     try {
-      await axios.post('https://jsonplaceholder.typicode.com/users', { email, password });
-      Alert.alert('Succès', 'Inscription réussie !');
+      await register(email, password);
+      alert('Inscription réussie !');
       router.replace('/auth/login'); // Redirige vers l'écran de connexion
     } catch (error) {
-      Alert.alert('Erreur', 'Échec de l\'inscription. Veuillez réessayer.');
+      setError('Échec de l\'inscription. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Inscription</Text>
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <View style={styles.container}>
+          <Text style={styles.title}>Inscription</Text>
 
-      <TextInput
-        placeholder="Email"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        style={styles.input}
-      />
+          {/* Champ Email */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Entrez votre email"
+              value={email}
+              style={styles.input}
+              onChangeText={setEmail}
+              keyboardType="email-address"
+              autoCapitalize="none"
+            />
+          </View>
 
-      <TextInput
-        placeholder="Mot de passe"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        style={styles.input}
-      />
+          {/* Champ Mot de passe */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Entrez votre mot de passe"
+              value={password}
+              style={styles.input}
+              onChangeText={setPassword}
+              secureTextEntry
+            />
+          </View>
 
-      <TouchableOpacity 
-        style={[styles.button, loading && styles.buttonDisabled]} 
-        onPress={handleRegister}
-        disabled={loading}
-      >
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>S'inscrire</Text>}
-      </TouchableOpacity>
+          {/* Message d'erreur */}
+          {error ? <Text style={styles.error}>{error}</Text> : null}
 
-      <Link href="/auth/login" asChild>
-        <Text style={styles.link}>Déjà un compte ? Connectez-vous</Text>
-      </Link>
-    </View>
+          {/* Bouton d'inscription */}
+          <TouchableOpacity
+            style={[styles.button, loading && styles.buttonDisabled]}
+            onPress={handleRegister}
+            disabled={loading}
+          >
+            <Text style={styles.buttonText}>
+              {loading ? 'Inscription en cours...' : 'S\'inscrire'}
+            </Text>
+          </TouchableOpacity>
+
+          {/* Lien vers la connexion */}
+          <Link href="/auth/login" asChild>
+            <Text style={styles.link}>Déjà un compte ? Connectez-vous</Text>
+          </Link>
+        </View>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     justifyContent: 'center',
-    backgroundColor: '#f9f9f9',
+    alignItems: 'center',
+    backgroundColor: '#f4f4f4',
   },
   title: {
-    fontSize: 26,
+    fontSize: 35,
+    marginBottom: 30,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
     color: '#333',
   },
-  input: {
-    marginBottom: 12,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    width: '90%',
+    height: 50,
     backgroundColor: '#fff',
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  input: {
+    flex: 1,
+    height: '100%',
+    fontSize: 16,
   },
   button: {
-    backgroundColor: '#007bff',
-    padding: 15,
-    borderRadius: 8,
+    width: '90%',
+    height: 50,
+    backgroundColor: '#6200ee',
+    borderRadius: 10,
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 10,
+    marginBottom: 20,
+    shadowColor: '#6200ee',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 4,
+    elevation: 5,
   },
   buttonDisabled: {
-    backgroundColor: '#aaa',
+    backgroundColor: '#b39ddb',
   },
   buttonText: {
+    fontSize: 18,
     color: '#fff',
-    fontSize: 16,
     fontWeight: 'bold',
   },
+  error: {
+    color: 'red',
+    marginBottom: 10,
+    fontSize: 14,
+  },
   link: {
-    marginTop: 15,
-    textAlign: 'center',
-    color: '#007bff',
+    color: '#6200ee',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

@@ -1,29 +1,16 @@
-// services/firebase.ts
-import messaging from '@react-native-firebase/messaging';
+import { initializeApp } from 'firebase/app';
+import { getMessaging, getToken, onMessage } from 'firebase/messaging';
 
-export const requestUserPermission = async (): Promise<void> => {
-  const authStatus = await messaging().requestPermission();
-  const enabled =
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL;
+const firebaseConfig = {
+    apiKey: "AIzaSyB6wj6n8Zztz_Vsr2WtWUY9YmHItl6cknY",
+    authDomain: "estiam-react-native-project.firebaseapp.com",
+    projectId: "estiam-react-native-project",
+    storageBucket: "estiam-react-native-project.firebasestorage.app",
+    messagingSenderId: "351864405181",
+    appId: "1:351864405181:web:713ff1144c9c87ff828bd4",
+    measurementId: "G-RBPPSQL6LQ"
+  };
 
-  if (enabled) {
-    console.log('Authorization status:', authStatus);
-  }
-};
+const app = initializeApp(firebaseConfig);
+export const messaging = getMessaging(app);
 
-export const getFCMToken = async (): Promise<string> => {
-  const token = await messaging().getToken();
-  console.log('FCM Token:', token);
-  return token;
-};
-
-export const setupNotifications = (): void => {
-  messaging().onMessage(async remoteMessage => {
-    console.log('Notification received:', remoteMessage);
-  });
-
-  messaging().setBackgroundMessageHandler(async remoteMessage => {
-    console.log('Background notification:', remoteMessage);
-  });
-};

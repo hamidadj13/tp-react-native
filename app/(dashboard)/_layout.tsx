@@ -14,40 +14,45 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint,
-        headerShown: false,
-        tabBarButton: HapticTab,
-        tabBarBackground: TabBarBackground,
+        tabBarActiveTintColor: Colors[colorScheme ?? 'light'].tint, // Couleur active de l'onglet
+        headerShown: false, // Masquer l'en-tête
+        tabBarButton: HapticTab, // Utiliser un composant personnalisé pour les onglets
+        tabBarBackground: TabBarBackground, // Arrière-plan personnalisé de la barre d'onglets
         tabBarStyle: Platform.select({
           ios: {
-            // Use a transparent background on iOS to show the blur effect
+            // Utiliser un fond transparent sur iOS pour afficher l'effet de flou
             position: 'absolute',
+            borderTopWidth: 0, // Supprimer la bordure supérieure
           },
           default: {},
         }),
       }}>
+      {/* Onglet Dashboard */}
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Dashboard',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="products"
-        options={{
-          title: 'Products',
-          href: "/products",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Dashboard', // Titre de l'onglet
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />, // Icône de l'onglet
         }}
       />
 
+      {/* Onglet Products */}
       <Tabs.Screen
-        name="Profile"
+        name="products"
         options={{
-          title: 'Profile',
-          href: "/profile",
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Products', // Titre de l'onglet
+          href: "/products", // Lien vers l'écran des produits
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />, // Icône de l'onglet
+        }}
+      />
+
+      {/* Onglet Profile */}
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile', // Titre de l'onglet
+          href: "/profile", // Lien vers l'écran du profil
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />, // Icône de l'onglet
         }}
       />
     </Tabs>

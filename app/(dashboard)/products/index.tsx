@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
 import { createProduct, fetchProducts, deleteProduct, Product } from '../../../services/api';
 import ProductForm from '../../../components/ProductForm';
 import ProductList from '../../../components/ProductList';
-import { Snackbar } from 'react-native-paper';
+import { Snackbar, Appbar } from 'react-native-paper';
 
 export default function ProductsScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
+  // Charger les produits au démarrage
   useEffect(() => {
     const loadProducts = async () => {
       const data = await fetchProducts();
@@ -17,26 +18,47 @@ export default function ProductsScreen() {
     loadProducts();
   }, []);
 
+  // Gérer la création d'un produit
   const handleCreateProduct = async (product: Omit<Product, 'id'>) => {
-    const newProduct = await createProduct(product);
-    setProducts([...products, newProduct]);
-    setSnackbarMessage('Produit ajouté avec succès !');
+    try {
+      const newProduct = await createProduct(product);
+      setProducts([...products, newProduct]);
+      setSnackbarMessage('Produit ajouté avec succès !');
+    } catch (error) {
+      setSnackbarMessage('Erreur lors de l\'ajout du produit.');
+    }
   };
 
+  // Gérer la suppression d'un produit
   const handleDeleteProduct = async (id: number) => {
-    await deleteProduct(id);
-    setProducts(products.filter(product => product.id !== id));
-    setSnackbarMessage('Produit supprimé.');
+    try {
+      await deleteProduct(id);
+      setProducts(products.filter(product => product.id !== id));
+      setSnackbarMessage('Produit supprimé.');
+    } catch (error) {
+      setSnackbarMessage('Erreur lors de la suppression du produit.');
+    }
   };
 
   return (
     <View style={styles.container}>
-      <ProductForm onSubmit={handleCreateProduct} />
-      <ProductList products={products} onDelete={handleDeleteProduct} />
+      {/* En-tête personnalisé */}
+      <Appbar.Header>
+        <Appbar.Content title="Produits" />
+      </Appbar.Header>
+
+      {/* Formulaire et liste de produits */}
+      <ScrollView contentContainerStyle={styles.content}>
+        <ProductForm onSubmit={handleCreateProduct} />
+        <ProductList products={products} onDelete={handleDeleteProduct} />
+      </ScrollView>
+
+      {/* Snackbar pour les messages */}
       <Snackbar
         visible={!!snackbarMessage}
         onDismiss={() => setSnackbarMessage(null)}
         duration={3000}
+        style={styles.snackbar}
       >
         {snackbarMessage}
       </Snackbar>
@@ -47,7 +69,12 @@ export default function ProductsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#ffffff',
+  },
+  content: {
     padding: 20,
-    backgroundColor: '#f4f4f4',
+  },
+  snackbar: {
+    backgroundColor: '#6200ee', // Couleur du Snackbar
   },
 });

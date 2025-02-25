@@ -1,15 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Button } from 'react-native';
 import { Link } from 'expo-router';
 import { useAuth } from '../../contexts/AuthContext';
-import NotificationButton from '../../components/NotificationButton';
 import ParallaxScrollView from '@/components/ParallaxScrollView';
 import { ThemedText } from '@/components/ThemedText';
 import { ThemedView } from '@/components/ThemedView';
 import { HelloWave } from '@/components/HelloWave';
 import { useRouter } from 'expo-router';
+import { requestNotificationPermission, getExpoPushToken, sendPushNotification } from '../../services/notifications';
+
+
 
 export default function DashboardScreen() {
+
+  useEffect(() => {
+    requestNotificationPermission();
+  }, []);
+
+  const handleSendNotification = async () => {
+    const token = await getExpoPushToken();
+    if (token) {
+      await sendPushNotification(token);
+    }
+  };
+
   const { user, logout } = useAuth();
   const router = useRouter();
 
@@ -56,7 +70,9 @@ export default function DashboardScreen() {
         )}
       </ThemedView>
 
-      <NotificationButton />
+      <ThemedView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Button title="Envoyer une notification" onPress={handleSendNotification} />
+      </ThemedView>
     </ParallaxScrollView>
   );
 }

@@ -1,6 +1,6 @@
-// components/ProductList.tsx
 import React from 'react';
-import { View, Text, FlatList, Button, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { Card, Text, IconButton } from 'react-native-paper';
 import { Product } from '../services/api';
 
 interface ProductListProps {
@@ -15,11 +15,20 @@ export default function ProductList({ products, onDelete }: ProductListProps) {
         data={products}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <View style={styles.item}>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.body}>{item.body}</Text>
-            <Button title="Supprimer" onPress={() => onDelete(item.id)} />
-          </View>
+          <Card style={styles.card}>
+            <Card.Content>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.body}>{item.body}</Text>
+            </Card.Content>
+            <Card.Actions>
+              <IconButton 
+                icon="delete" 
+                iconColor="red" 
+                size={24} 
+                onPress={() => onDelete(item.id)} 
+              />
+            </Card.Actions>
+          </Card>
         )}
       />
     </View>
@@ -29,18 +38,18 @@ export default function ProductList({ products, onDelete }: ProductListProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingTop: 10,
   },
-  item: {
-    padding: 10,
+  card: {
     marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    elevation: 3,
   },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   body: {
     fontSize: 14,

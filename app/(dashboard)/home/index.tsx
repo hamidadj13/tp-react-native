@@ -2,8 +2,8 @@
 import React from 'react';
 import { View, Text, Button } from 'react-native';
 import { Link } from 'expo-router';
-import { useAuth } from '../../contexts/AuthContext';
-import NotificationButton from '../../components/NotificationButton';
+import { useAuth } from '../../../contexts/AuthContext';
+import NotificationButton from '../../../components/NotificationButton';
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
@@ -20,7 +20,7 @@ export default function HomeScreen() {
           <Button title="Se déconnecter" onPress={logout} />
         </>
       ) : (
-        <Link href="/login" asChild>
+        <Link href="/auth/login" asChild>
           <Button title="Se connecter" />
         </Link>
       )}

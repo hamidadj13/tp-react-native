@@ -1,6 +1,6 @@
-// components/ProductForm.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, Alert } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { TextInput, Button, Snackbar } from 'react-native-paper';
 import { Product } from '../services/api';
 
 interface ProductFormProps {
@@ -11,41 +11,64 @@ interface ProductFormProps {
 export default function ProductForm({ onSubmit, initialProduct }: ProductFormProps) {
   const [title, setTitle] = useState(initialProduct?.title || '');
   const [body, setBody] = useState(initialProduct?.body || '');
+  const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
   const handleSubmit = async () => {
     if (!title || !body) {
-      Alert.alert('Erreur', 'Veuillez remplir tous les champs.');
+      setSnackbarMessage('Veuillez remplir tous les champs.');
       return;
     }
 
     try {
       await onSubmit({ title, body });
-      Alert.alert('Succès', 'Produit enregistré avec succès !');
+      setSnackbarMessage('Produit ajouté avec succès !');
       setTitle('');
       setBody('');
     } catch (error) {
-      Alert.alert('Erreur', 'Échec de l\'enregistrement. Veuillez réessayer.');
+      setSnackbarMessage('Échec de l\'enregistrement. Veuillez réessayer.');
     }
   };
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>Titre du produit</Text>
+    <View style={styles.container}>
       <TextInput
-        placeholder="Titre"
+        label="Titre du produit"
         value={title}
         onChangeText={setTitle}
-        style={{ marginBottom: 10, padding: 10, borderWidth: 1, borderColor: '#ccc' }}
+        mode="outlined"
+        style={styles.input}
       />
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>Description du produit</Text>
       <TextInput
-        placeholder="Description"
+        label="Description du produit"
         value={body}
         onChangeText={setBody}
+        mode="outlined"
         multiline
-        style={{ marginBottom: 10, padding: 10, borderWidth: 1, borderColor: '#ccc', height: 100 }}
+        numberOfLines={3}
+        style={styles.input}
       />
-      <Button title="Enregistrer" onPress={handleSubmit} />
+      <Button mode="contained" onPress={handleSubmit} style={styles.button}>
+        Enregistrer
+      </Button>
+      <Snackbar
+        visible={!!snackbarMessage}
+        onDismiss={() => setSnackbarMessage(null)}
+        duration={3000}
+      >
+        {snackbarMessage}
+      </Snackbar>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 20,
+  },
+  input: {
+    marginBottom: 10,
+  },
+  button: {
+    marginTop: 10,
+  },
+});

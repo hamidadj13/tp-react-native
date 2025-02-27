@@ -1,3 +1,4 @@
+// app/auth/login.tsx
 import React, { useState } from 'react';
 import {
   TouchableWithoutFeedback,
@@ -5,21 +6,38 @@ import {
   KeyboardAvoidingView, Platform
 } from 'react-native';
 import { useAuth } from '@/contexts/AuthContext';
-import { Link } from 'expo-router';
+import { Link, useRouter } from 'expo-router';
 
 export default function LoginScreen() {
   const { login } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const router = useRouter();
 
   const handleLogin = async () => {
     setError('');
 
     try {
-      await login(email, password);
-    } catch (e) {
-      setError('Email ou mot de passe incorrect !');
+      // Appel à l'API pour récupérer tous les utilisateurs
+      const response = await fetch('https://fakestoreapi.com/users');
+      const users = await response.json();
+
+      // Trouve l'utilisateur correspondant à l'email et au mot de passe
+      const user = users.find(
+        (u: any) => u.email === email && u.password === password
+      );
+
+      if (user) {
+        // Simule une connexion réussie
+        login(user);
+        router.replace('/(dashboard)/home'); // Redirige vers l'écran d'accueil
+      } else {
+        setError('Email ou mot de passe incorrect.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la connexion:', error);
+      setError('Échec de la connexion. Veuillez réessayer.');
     }
   };
 

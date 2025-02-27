@@ -1,52 +1,48 @@
 // contexts/AuthContext.tsx
-import React, { createContext, useContext, useState, useEffect } from 'react';
-import { auth } from '../configs/firebaseConfig';
-import { onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
+import React, { createContext, useContext, useState } from 'react';
 
-const AuthContext = createContext<any>(null);
+interface User {
+  id: number;
+  email: string;
+  username: string;
+  password: string;
+}
 
-export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
+interface AuthContextType {
+  user: User | null;
+  login: (user: User) => void;
+  register: (user: User) => void;
+  logout: () => void;
+}
 
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
-      setLoading(false);
-    });
+const AuthContext = createContext<AuthContextType | null>(null);
 
-    return unsubscribe; // Désabonnement lors du démontage
-  }, []);
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<User | null>(null);
 
-  const login = async (email: string, password: string) => {
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      throw new Error('Échec de la connexion. Vérifiez vos informations.');
-    }
+  const login = (user: User) => {
+    setUser(user); // Simule une connexion réussie
   };
 
-  const register = async (email: string, password: string) => {
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-    } catch (error) {
-      throw new Error('Échec de l\'inscription. Veuillez réessayer.');
-    }
+  const register = (user: User) => {
+    setUser(user); // Simule une inscription réussie
   };
 
-  const logout = async () => {
-    try {
-      await signOut(auth);
-    } catch (error) {
-      throw new Error('Échec de la déconnexion.');
-    }
+  const logout = () => {
+    setUser(null); // Déconnecte l'utilisateur
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, register, logout, loading }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error('useAuth doit être utilisé dans un AuthProvider');
+  }
+  return context;
+};

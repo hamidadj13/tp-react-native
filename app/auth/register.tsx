@@ -1,3 +1,4 @@
+// app/auth/register.tsx
 import React, { useState } from 'react';
 import {
   TouchableWithoutFeedback,
@@ -11,12 +12,13 @@ export default function RegisterScreen() {
   const { register } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
   const handleRegister = async () => {
-    if (!email || !password) {
+    if (!email || !password || !username) {
       setError('Veuillez remplir tous les champs.');
       return;
     }
@@ -25,10 +27,34 @@ export default function RegisterScreen() {
     setError('');
 
     try {
-      await register(email, password);
-      alert('Inscription réussie !');
-      router.replace('/auth/login'); // Redirige vers l'écran de connexion
+      // Données de l'utilisateur à envoyer à l'API
+      const user = {
+        username,
+        email,
+        password,
+      };
+
+      // Appel à l'API pour créer un nouvel utilisateur
+      const response = await fetch('https://fakestoreapi.com/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
+      });
+
+      const data = await response.json();
+
+      if (data) {
+        // Simule une inscription réussie
+        register(data); // Met à jour l'utilisateur dans le contexte
+        alert('Inscription réussie !');
+        router.replace('/auth/login'); // Redirige vers l'écran de connexion
+      } else {
+        setError('Échec de l\'inscription. Veuillez réessayer.');
+      }
     } catch (error) {
+      console.error('Erreur lors de l\'inscription:', error);
       setError('Échec de l\'inscription. Veuillez réessayer.');
     } finally {
       setLoading(false);
@@ -43,6 +69,16 @@ export default function RegisterScreen() {
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
           <Text style={styles.title}>Inscription</Text>
+
+          {/* Champ Nom d'utilisateur */}
+          <View style={styles.inputContainer}>
+            <TextInput
+              placeholder="Nom d'utilisateur"
+              value={username}
+              style={styles.input}
+              onChangeText={setUsername}
+            />
+          </View>
 
           {/* Champ Email */}
           <View style={styles.inputContainer}>

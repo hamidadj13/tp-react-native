@@ -5,11 +5,11 @@ import ProductForm from '../../../components/ProductForm';
 import ProductList from '../../../components/ProductList';
 import { Snackbar, Appbar } from 'react-native-paper';
 
+
 export default function ProductsScreen() {
   const [products, setProducts] = useState<Product[]>([]);
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
 
-  // Charger les produits au démarrage
   useEffect(() => {
     const loadProducts = async () => {
       const data = await fetchProducts();
@@ -18,7 +18,6 @@ export default function ProductsScreen() {
     loadProducts();
   }, []);
 
-  // Gérer la création d'un produit
   const handleCreateProduct = async (product: Omit<Product, 'id'>) => {
     try {
       const newProduct = await createProduct(product);
@@ -29,7 +28,6 @@ export default function ProductsScreen() {
     }
   };
 
-  // Gérer la suppression d'un produit
   const handleDeleteProduct = async (id: number) => {
     try {
       await deleteProduct(id);
@@ -42,18 +40,16 @@ export default function ProductsScreen() {
 
   return (
     <View style={styles.container}>
-      {/* En-tête personnalisé */}
       <Appbar.Header>
         <Appbar.Content title="Produits" />
       </Appbar.Header>
 
-      {/* Formulaire et liste de produits */}
-      <ScrollView contentContainerStyle={styles.content}>
+      {/* Supprimer le ScrollView et laisser ProductList gérer le défilement */}
+      <View style={styles.content}>
         <ProductForm onSubmit={handleCreateProduct} />
         <ProductList products={products} onDelete={handleDeleteProduct} />
-      </ScrollView>
+      </View>
 
-      {/* Snackbar pour les messages */}
       <Snackbar
         visible={!!snackbarMessage}
         onDismiss={() => setSnackbarMessage(null)}
@@ -72,9 +68,10 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff',
   },
   content: {
+    flex: 1,
     padding: 20,
   },
   snackbar: {
-    backgroundColor: '#6200ee', // Couleur du Snackbar
+    backgroundColor: '#6200ee',
   },
 });

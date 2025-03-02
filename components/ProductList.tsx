@@ -10,35 +10,34 @@ interface ProductListProps {
 
 export default function ProductList({ products, onDelete }: ProductListProps) {
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={products}
-        keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => (
-          <Card style={styles.card}>
-            <Card.Content>
-              <Text style={styles.title}>{item.title}</Text>
-              <Text style={styles.body}>{item.body}</Text>
-            </Card.Content>
-            <Card.Actions>
-              <IconButton 
-                icon="delete" 
-                iconColor="red" 
-                size={24} 
-                onPress={() => onDelete(item.id)} 
-              />
-            </Card.Actions>
-          </Card>
-        )}
-      />
-    </View>
+    <FlatList
+      data={products}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={({ item }) => (
+        <Card style={styles.card}>
+          <Card.Content>
+            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.body}>{item.body}</Text>
+          </Card.Content>
+          <Card.Actions>
+            <IconButton
+              icon="delete"
+              iconColor="red"
+              size={24}
+              onPress={() => onDelete(item.id)}
+            />
+          </Card.Actions>
+        </Card>
+      )}
+      contentContainerStyle={styles.container}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     paddingTop: 10,
+    paddingHorizontal: 10,
   },
   card: {
     marginBottom: 10,

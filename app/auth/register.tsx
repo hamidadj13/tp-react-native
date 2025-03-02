@@ -2,8 +2,14 @@
 import React, { useState } from 'react';
 import {
   TouchableWithoutFeedback,
-  TouchableOpacity, StyleSheet, Text, TextInput, View, Keyboard,
-  KeyboardAvoidingView, Platform
+  TouchableOpacity,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+  Keyboard,
+  KeyboardAvoidingView,
+  Platform,
 } from 'react-native';
 import { Link, useRouter } from 'expo-router';
 import { useAuth } from '@/contexts/AuthContext';
@@ -12,13 +18,12 @@ export default function RegisterScreen() {
   const { register } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [username, setUsername] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const router = useRouter();
 
   const handleRegister = async () => {
-    if (!email || !password || !username) {
+    if (!email || !password) {
       setError('Veuillez remplir tous les champs.');
       return;
     }
@@ -27,35 +32,12 @@ export default function RegisterScreen() {
     setError('');
 
     try {
-      // Données de l'utilisateur à envoyer à l'API
-      const user = {
-        username,
-        email,
-        password,
-      };
-
-      // Appel à l'API pour créer un nouvel utilisateur
-      const response = await fetch('https://fakestoreapi.com/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(user),
-      });
-
-      const data = await response.json();
-
-      if (data) {
-        // Simule une inscription réussie
-        register(data); // Met à jour l'utilisateur dans le contexte
-        alert('Inscription réussie !');
-        router.replace('/auth/login'); // Redirige vers l'écran de connexion
-      } else {
-        setError('Échec de l\'inscription. Veuillez réessayer.');
-      }
-    } catch (error) {
+      await register(email, password);
+      alert('Inscription réussie !');
+      router.replace('/auth/login');
+    } catch (error: any) {
       console.error('Erreur lors de l\'inscription:', error);
-      setError('Échec de l\'inscription. Veuillez réessayer.');
+      setError(error.message || 'Échec de l\'inscription. Veuillez réessayer.');
     } finally {
       setLoading(false);
     }
@@ -70,17 +52,8 @@ export default function RegisterScreen() {
         <View style={styles.container}>
           <Text style={styles.title}>Inscription</Text>
 
-          {/* Champ Nom d'utilisateur */}
-          <View style={styles.inputContainer}>
-            <TextInput
-              placeholder="Nom d'utilisateur"
-              value={username}
-              style={styles.input}
-              onChangeText={setUsername}
-            />
-          </View>
-
-          {/* Champ Email */}
+          {/* Email field */}
+          <Text style={styles.label}>Email</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="Entrez votre email"
@@ -92,7 +65,8 @@ export default function RegisterScreen() {
             />
           </View>
 
-          {/* Champ Mot de passe */}
+          {/* Password field */}
+          <Text style={styles.label}>Mot de Passe</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="Entrez votre mot de passe"
@@ -103,10 +77,10 @@ export default function RegisterScreen() {
             />
           </View>
 
-          {/* Message d'erreur */}
+          {/* Error message */}
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          {/* Bouton d'inscription */}
+          {/* Register button */}
           <TouchableOpacity
             style={[styles.button, loading && styles.buttonDisabled]}
             onPress={handleRegister}
@@ -117,7 +91,7 @@ export default function RegisterScreen() {
             </Text>
           </TouchableOpacity>
 
-          {/* Lien vers la connexion */}
+          {/* Login link */}
           <Link href="/auth/login" asChild>
             <Text style={styles.link}>Déjà un compte ? Connectez-vous</Text>
           </Link>
@@ -140,11 +114,15 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
   },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#333',
+  },
   inputContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
     width: '90%',
-    height: 50,
     backgroundColor: '#fff',
     borderRadius: 10,
     paddingHorizontal: 15,
@@ -156,9 +134,12 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   input: {
-    flex: 1,
-    height: '100%',
+    height: 50,
     fontSize: 16,
+    borderBottomWidth: 1,
+    borderColor: '#ddd',
+    paddingLeft: 10,
+    color: '#333',
   },
   button: {
     width: '90%',

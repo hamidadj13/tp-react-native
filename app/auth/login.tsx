@@ -18,26 +18,17 @@ export default function LoginScreen() {
   const handleLogin = async () => {
     setError('');
 
+    if (!email || !password) {
+      setError('Veuillez remplir tous les champs');
+      return;
+    }
+
     try {
-      // Appel à l'API pour récupérer tous les utilisateurs
-      const response = await fetch('https://fakestoreapi.com/users');
-      const users = await response.json();
-
-      // Trouve l'utilisateur correspondant à l'email et au mot de passe
-      const user = users.find(
-        (u: any) => u.email === email && u.password === password
-      );
-
-      if (user) {
-        // Simule une connexion réussie
-        login(user);
-        router.replace('/(dashboard)/home'); // Redirige vers l'écran d'accueil
-      } else {
-        setError('Email ou mot de passe incorrect.');
-      }
-    } catch (error) {
+      await login(email, password);
+      // No need to redirect here as login function handles redirection
+    } catch (error: any) {
       console.error('Erreur lors de la connexion:', error);
-      setError('Échec de la connexion. Veuillez réessayer.');
+      setError(error.message || 'Échec de la connexion. Veuillez réessayer.');
     }
   };
 
@@ -50,7 +41,8 @@ export default function LoginScreen() {
         <View style={styles.container}>
           <Text style={styles.title}>Connexion</Text>
 
-          {/* Champ Email */}
+          {/* Email field */}
+          <Text style={styles.label}>Email</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="Entrez votre email"
@@ -62,7 +54,8 @@ export default function LoginScreen() {
             />
           </View>
 
-          {/* Champ Mot de passe */}
+          {/* Password field */}
+          <Text style={styles.label}>Mot de Passe</Text>
           <View style={styles.inputContainer}>
             <TextInput
               placeholder="Entrez votre mot de passe"
@@ -73,10 +66,10 @@ export default function LoginScreen() {
             />
           </View>
 
-          {/* Message d'erreur */}
+          {/* Error message */}
           {error ? <Text style={styles.error}>{error}</Text> : null}
 
-          {/* Bouton de connexion */}
+          {/* Login button */}
           <TouchableOpacity
             style={styles.button}
             onPress={handleLogin}
@@ -84,7 +77,7 @@ export default function LoginScreen() {
             <Text style={styles.buttonText}>Se connecter</Text>
           </TouchableOpacity>
 
-          {/* Lien vers l'inscription */}
+          {/* Registration link */}
           <Link href="/auth/register" asChild>
             <Text style={styles.link}>Pas de compte ? Inscrivez-vous</Text>
           </Link>
@@ -121,6 +114,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#333',
+    textAlign: 'left',
   },
   input: {
     flex: 1,

@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useAuth } from '../../../contexts/AuthContext';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
+  const router = useRouter();
 
   return (
     <View style={styles.container}>
@@ -14,28 +16,26 @@ export default function HomeScreen() {
         <>
           <Text style={styles.welcomeText}>Bienvenue, {user.email} 👋</Text>
 
-          {/* Bouton pour voir le profil */}
-          <Link href="/profile" asChild>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Voir le profil</Text>
-            </TouchableOpacity>
-          </Link>
+          {/* Bouton Profil */}
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/profile')}>
+            <Ionicons name="person-circle-outline" size={24} color="#fff" />
+            <Text style={styles.buttonText}>Voir le profil</Text>
+          </TouchableOpacity>
 
-          {/* Bouton pour se déconnecter */}
+          {/* Bouton Déconnexion */}
           <TouchableOpacity style={[styles.button, styles.logoutButton]} onPress={logout}>
+            <Ionicons name="log-out-outline" size={24} color="#fff" />
             <Text style={styles.buttonText}>Se déconnecter</Text>
           </TouchableOpacity>
         </>
       ) : (
         <>
-          {/* Bouton pour se connecter */}
-          <Link href="/auth/login" asChild>
-            <TouchableOpacity style={styles.button}>
-              <Text style={styles.buttonText}>Se connecter</Text>
-            </TouchableOpacity>
-          </Link>
+          {/* Bouton Connexion */}
+          <TouchableOpacity style={styles.button} onPress={() => router.push('/auth/login')}>
+            <Ionicons name="log-in-outline" size={24} color="#fff" />
+            <Text style={styles.buttonText}>Se connecter</Text>
+          </TouchableOpacity>
         </>
-        
       )}
     </View>
   );
@@ -62,10 +62,13 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   button: {
+    flexDirection: 'row',
     backgroundColor: '#6200ee',
     padding: 15,
     borderRadius: 10,
     alignItems: 'center',
+    justifyContent: 'center',
+    gap: 10,
     marginBottom: 15,
     shadowColor: '#6200ee',
     shadowOffset: { width: 0, height: 2 },
@@ -74,7 +77,7 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   logoutButton: {
-    backgroundColor: '#ff4444', // Couleur rouge pour le bouton de déconnexion
+    backgroundColor: '#ff4444',
   },
   buttonText: {
     color: '#fff',

@@ -2,8 +2,15 @@ import { Redirect } from 'expo-router';
 import { useAuth } from '../contexts/AuthContext';
 
 export default function Index() {
-  const { user } = useAuth(); // Utilisez votre contexte d'authentification
+  const { isAuthenticated, loading } = useAuth(); // Use isAuthenticated instead of user
 
-  // Redirige vers le tableau de bord si l'utilisateur est connecté, sinon vers la connexion
-  return user ? <Redirect href="/(dashboard)/home" /> : <Redirect href="/auth/login" />;
+  // Show nothing while authentication state is loading
+  if (loading) {
+    return null;
+  }
+
+  // Redirect to dashboard if user is authenticated, otherwise to login
+  return isAuthenticated ? 
+    <Redirect href="/(dashboard)/home" /> : 
+    <Redirect href="/auth/login" />;
 }

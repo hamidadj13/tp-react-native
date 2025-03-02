@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { TextInput, Button, Snackbar } from 'react-native-paper';
+import { TextInput, Button, Snackbar, ActivityIndicator } from 'react-native-paper';
 import { Product } from '../services/api';
 
 interface ProductFormProps {
@@ -12,6 +12,7 @@ export default function ProductForm({ onSubmit, initialProduct }: ProductFormPro
   const [title, setTitle] = useState(initialProduct?.title || '');
   const [body, setBody] = useState(initialProduct?.body || '');
   const [snackbarMessage, setSnackbarMessage] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
     if (!title || !body) {
@@ -19,6 +20,7 @@ export default function ProductForm({ onSubmit, initialProduct }: ProductFormPro
       return;
     }
 
+    setLoading(true);
     try {
       await onSubmit({ title, body });
       setSnackbarMessage('Produit ajouté avec succès !');
@@ -26,6 +28,8 @@ export default function ProductForm({ onSubmit, initialProduct }: ProductFormPro
       setBody('');
     } catch (error) {
       setSnackbarMessage('Échec de l\'enregistrement. Veuillez réessayer.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,8 +51,13 @@ export default function ProductForm({ onSubmit, initialProduct }: ProductFormPro
         numberOfLines={3}
         style={styles.input}
       />
-      <Button mode="contained" onPress={handleSubmit} style={styles.button}>
-        Enregistrer
+      <Button
+        mode="contained"
+        onPress={handleSubmit}
+        style={styles.button}
+        disabled={loading}
+      >
+        {loading ? <ActivityIndicator color="#fff" /> : 'Enregistrer'}
       </Button>
       <Snackbar
         visible={!!snackbarMessage}

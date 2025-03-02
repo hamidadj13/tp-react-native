@@ -1,8 +1,16 @@
-import { Stack, useNavigation } from 'expo-router';
+import { Stack } from 'expo-router';
+import { useCallback } from 'react';
 import { Button } from 'react-native';
 
 export default function AuthLayout() {
-  const navigation = useNavigation();
+  const renderHeaderLeft = useCallback(() => {
+    return (
+      <Button
+        title="Retour"
+        onPress={() => {}} // Will be handled by the default back behavior
+      />
+    );
+  }, []);
 
   return (
     <Stack>
@@ -10,40 +18,29 @@ export default function AuthLayout() {
       <Stack.Screen
         name="login"
         options={{
-          title: 'Connexion', // Titre de l'écran
-          headerLeft: () => (
-            <Button
-              title="Retour"
-              onPress={() => navigation.goBack()} // Retour à l'écran précédent
-            />
-          ),
+          title: 'Connexion',
+          headerLeft: renderHeaderLeft,
           headerStyle: {
-            backgroundColor: '#6200ee', // Couleur de fond de l'en-tête
+            backgroundColor: '#6200ee',
           },
-          headerTintColor: '#fff', // Couleur du texte de l'en-tête
+          headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold', // Style du titre
+            fontWeight: 'bold',
           },
         }}
       />
-
       {/* Écran d'inscription */}
       <Stack.Screen
         name="register"
         options={{
-          title: 'Inscription', // Titre de l'écran
-          headerLeft: () => (
-            <Button
-              title="Retour"
-              onPress={() => navigation.goBack()} // Retour à l'écran précédent
-            />
-          ),
+          title: 'Inscription',
+          headerLeft: renderHeaderLeft,
           headerStyle: {
-            backgroundColor: '#6200ee', // Couleur de fond de l'en-tête
+            backgroundColor: '#6200ee',
           },
-          headerTintColor: '#fff', // Couleur du texte de l'en-tête
+          headerTintColor: '#fff',
           headerTitleStyle: {
-            fontWeight: 'bold', // Style du titre
+            fontWeight: 'bold',
           },
         }}
       />

@@ -1,50 +1,139 @@
-# Welcome to your Expo app 👋
+# TP React Native
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Ce projet est une application React Native qui permet de gérer des produits, de s'authentifier et de recevoir des notifications. L'inscription (register) ne fonctionne qu'avec des adresses e-mail pré-enregistrées dans l'API.
 
-## Get started
+## Fonctionnalités
 
-1. Install dependencies
+- **Authentification** : Connexion et déconnexion.
+- **Inscription** : Fonctionne uniquement avec les adresses e-mail pré-enregistrées dans l'API.
+- **Gestion des produits** : Ajout, suppression et affichage des produits.
+- **Notifications** : Envoi de notifications push via Expo Notifications.
+
+## Prérequis
+
+Avant de commencer, assurez-vous d'avoir les outils suivants installés :
+
+- [Node.js](https://nodejs.org/) (version 16 ou supérieure)
+- [Expo CLI](https://docs.expo.dev/get-started/installation/) (installé globalement via `npm install -g expo-cli`)
+- Un émulateur Android/iOS ou l'application [Expo Go](https://expo.dev/client) pour tester sur un appareil physique.
+
+## Installation
+
+1. **Cloner le dépôt**
+
+   Ouvrez votre terminal et exécutez la commande suivante pour cloner le dépôt :
+
+   ```bash
+   git clone https://github.com/hamidadj13/tp-react-native.git
+   cd tp-react-native
+
+
+2.Installez toutes les dépendances nécessaires en exécutant :
 
    ```bash
    npm install
    ```
 
-2. Start the app
+3.Démarrer le projet
+
+Une fois les dépendances installées, démarrez le projet avec :
 
    ```bash
-    npx expo start
+   npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+Cela ouvrira une interface Expo dans votre navigateur. Vous pouvez ensuite :
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+Scanner le QR code avec l'application Expo Go (sur un appareil physique).
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+Ouvrir dans un émulateur en appuyant sur a (Android) ou i (iOS) dans le terminal.
 
-## Get a fresh project
+4.Utilisation
 
-When you're ready, run:
+*** Authentification
 
-```bash
-npm run reset-project
-```
+   Connexion : Utilisez les identifiants suivants pour vous connecter :
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+   Email : <eve.holt@reqres.in>
 
-## Learn more
+   Mot de passe : pistol
 
-To learn more about developing your project with Expo, look at the following resources:
+*** Inscription : L'inscription ne fonctionne qu'avec des adresses e-mail pré-enregistrées dans l'API. Par exemple :
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+   Email : <eve.holt@reqres.in>
 
-## Join the community
+   Mot de passe : pistol
 
-Join our community of developers creating universal apps.
+ !!!Si vous essayez de vous inscrire avec une autre adresse e-mail, l'API renverra une erreur.!!!
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+*** Gestion des produits
+
+- Ajouter un produit : Remplissez le formulaire pour ajouter un nouveau produit.
+
+- Supprimer un produit : Cliquez sur le bouton de suppression à côté d'un produit pour le supprimer.
+
+- Notifications
+
+Envoyer une notification : Cliquez sur le bouton "Envoyer une notification" pour recevoir une notification de test.
+
+5.Structure du projet
+
+app/ : Contient les écrans et les composants de l'application.
+
+auth/ : Gère l'authentification (connexion et inscription).
+
+dashboard/ : Écran principal après la connexion.
+
+products/ : Gestion des produits.
+
+components/ : Composants réutilisables.
+
+contexts/ : Contexte d'authentification.
+
+services/ : Services API et notifications.
+
+6.Technologies utilisées
+
+React Native
+
+Expo
+
+React Navigation
+
+React Native Paper
+
+Axios (pour les requêtes API)
+
+7.Contribuer
+
+Si vous souhaitez contribuer à ce projet, suivez les étapes suivantes :
+
+Forkez le dépôt : Cliquez sur le bouton "Fork" en haut à droite de la page du dépôt.
+
+Clonez votre fork :
+
+   ```bash
+   git clone https://github.com/hamidadj13/tp-react-native.git
+   cd tp-react-native
+   ```
+
+Créez une nouvelle branche :
+
+   ```bash
+   git checkout -b feature/nouvelle-fonctionnalite
+   ```
+
+Faites vos modifications et committez-les :
+
+   ```bash
+   git add .
+   git commit -m "Ajouter une nouvelle fonctionnalité"
+   ```
+
+Pushez vers votre branche :
+
+   ```bash
+   git push origin feature/nouvelle-fonctionnalite
+   ```
+
+Ouvrez une Pull Request : Allez sur la page du dépôt original et cliquez sur "New Pull Request".
